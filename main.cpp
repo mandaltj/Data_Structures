@@ -8,7 +8,7 @@ int main(){
 	LinkedList<int> list_2;
 	LinkedList<int> list_3;
 
-	constexpr int LIST_SIZE_SMALL = 100000;
+	constexpr int LIST_SIZE_SMALL = 1000;
 	constexpr int LIST_SIZE_LARGE = LIST_SIZE_SMALL*10;
 
 	for(int i=0; i<LIST_SIZE_SMALL;i++){
@@ -23,43 +23,43 @@ int main(){
 		list_3.pushBack(temp);
 	}
 
-	//auto start_time = std::chrono::high_resolution_clock::now();
+	auto start_time = std::chrono::high_resolution_clock::now();
+	list_0.insertionSort();
 	//list_1.MergeSortRecursive();
-	//auto stop_time = std::chrono::high_resolution_clock::now();
-	//std::chrono::duration<double, std::milli> dur_ms = stop_time - start_time;
-	//std::cout << "Time elapsed: " << dur_ms.count() << "ms" << std::endl;
+	auto stop_time = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double, std::milli> dur_ms = stop_time - start_time;
+	std::cout << "Time elapsed: " << dur_ms.count() << "ms" << std::endl;
 
-	//start_time = std::chrono::high_resolution_clock::now();
-	//list_0.insertionSort();
-	//stop_time = std::chrono::high_resolution_clock::now();
-	//dur_ms = stop_time - start_time;
-	//std::cout << "Time elapsed: " << dur_ms.count() << "ms" << std::endl;
+	start_time = std::chrono::high_resolution_clock::now();
+	list_1.MergeSortRecursive();
+	stop_time = std::chrono::high_resolution_clock::now();
+	dur_ms = stop_time - start_time;
+	std::cout << "Time elapsed: " << dur_ms.count() << "ms" << std::endl;
 
-	//start_time = std::chrono::high_resolution_clock::now();
-	//list_2.insertionSort();
-	//stop_time = std::chrono::high_resolution_clock::now();
-	//dur_ms = stop_time - start_time;
-	//std::cout << "Time elapsed: " << dur_ms.count() << "ms" << std::endl;
+	start_time = std::chrono::high_resolution_clock::now();
+	list_2.insertionSort();
+	stop_time = std::chrono::high_resolution_clock::now();
+	dur_ms = stop_time - start_time;
+	std::cout << "Time elapsed: " << dur_ms.count() << "ms" << std::endl;
 
-	//start_time = std::chrono::high_resolution_clock::now();
+	start_time = std::chrono::high_resolution_clock::now();
 	list_3.MergeSortRecursive();
-	//stop_time = std::chrono::high_resolution_clock::now();
-	//dur_ms = stop_time - start_time;
-	//std::cout << "Time elapsed: " << dur_ms.count() << "ms" << std::endl;
-	std::cout<<list_3.getsize()<<'\n';
+	stop_time = std::chrono::high_resolution_clock::now();
+	dur_ms = stop_time - start_time;
+	std::cout << "Time elapsed: " << dur_ms.count() << "ms" << std::endl;
 
-	//if(list_0==list_1){
-	//	std::cout<<"Lists Same\n";
-	//}
-	//else{
-	//	std::cout<<"Lists not Same\n";
-	//}
-	//if(list_2==list_3){
-	//	std::cout<<"Lists Same\n";
-	//}
-	//else{
-	//	std::cout<<"Lists not Same\n";
-	//}
+	if(list_0==list_1){
+		std::cout<<"Lists Same\n";
+	}
+	else{
+		std::cout<<"Lists not Same\n";
+	}
+	if(list_2==list_3){
+		std::cout<<"Lists Same\n";
+	}
+	else{
+		std::cout<<"Lists not Same\n";
+	}
 
 	//list_0.pushBack(5);
 	//list_0.pushBack(3);

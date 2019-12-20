@@ -1,3 +1,5 @@
+CXX=g++
+CXXFLAGS=-std=c++11
 EXE_SRC  := main.cpp
 TEST_SRC := test.cpp catch/catchmain.cpp
 
