@@ -1,25 +1,30 @@
-class Node {
+#include <iostream>
+
+template <typename T>
+class LinkedList{
 public:
-	T data;
-	Node *next;
-	Node *prev;
+	class Node {
+	public:
+		T data;
+		Node *next;
+		Node *prev;
 
-	//Default constructor for Node Class
-	Node(): next(nullptr), prev(nullptr) {}
-
-	//Argument based constructor for Node Class
-	Node(const T & data): data(data), next(nullptr), prev(nullptr) {}
-
-	//= operator overload
-	Node& operator=(const Node& other){
-		this->next = other.next;
-		this->prev = other.prev;
-		this->data = other.data;
-		return *this;
-	}
-
+		Node(): next(nullptr), prev(nullptr) {}
+		Node(const T & data): data(data), next(nullptr), prev(nullptr) {}
+	};
+public:
+	Node* Foo_do_something();
 };
 
-void MergeSort(Node** startNode);
-void split(Node* startNode, Node** left_start_node, Node** right_start_node);
-Node* Merge(Node* left_start_node, Node* right_start_node);
+template <typename T>
+typename LinkedList<T>::Node* LinkedList<T>::Foo_do_something(){
+	std::cout<<"Hello";
+	Node *ptr = new Node(100);
+	return ptr;
+}
+
+int main(){
+	LinkedList<int> X;
+	X.Foo_do_something();
+	return 0;
+}

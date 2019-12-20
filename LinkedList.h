@@ -80,91 +80,9 @@ public:
     void MergeSortRecursive();
     void MergeSort(Node** startNode);
     void split(Node* startNode, Node** left_start_node, Node** right_start_node);
-    // Node* Merge(Node* left_start_node, Node* right_start_node){
-    //     std::cout<<"Inside Merge\n";
-    //     if (left_start_node==nullptr){
-    //         return right_start_node;
-    //     }
-    //
-    //     if (right_start_node==nullptr){
-    //         return left_start_node;
-    //     }
-    //
-    //     Node* head_ptr = nullptr;
-    //
-    //     if(left_start_node->data<=right_start_node->data){
-    //         head_ptr = left_start_node;
-    //         head_ptr->next = Merge(left_start_node->next, right_start_node);
-    //         head_ptr->next->prev = head_ptr;
-    //     }
-    //     else{
-    //         head_ptr = right_start_node;
-    //         head_ptr->next = Merge(left_start_node, right_start_node->next);
-    //         head_ptr->next->prev = head_ptr;
-    //     }
-    //     return head_ptr;
-    // }
+	Node* Merge(Node* left_start_node, Node* right_start_node);
 
-    Node* Merge(Node* left_start_node, Node* right_start_node){
-        //std::cout<<">>>>>>Inside Merge\n";
-        //std::cout<<"left_start_node: "<<left_start_node<<'\n';
-        //std::cout<<"right_start_node: "<<right_start_node<<'\n';
-
-        Node* head_ptr;
-        Node* main_thru;
-
-        Node* left_thru  = left_start_node;
-        Node* right_thru = right_start_node;
-        bool first_time  = true;
-
-        while(true){
-            if(left_thru->data<=right_thru->data){
-                if (first_time){
-                    head_ptr    = left_thru;
-                    main_thru   = left_thru;
-                    first_time  = false;
-                }
-                else{
-                    main_thru->next         = left_thru;
-                    main_thru->next->prev   = main_thru;
-                    main_thru               = main_thru->next;
-                }
-                left_thru = left_thru->next;
-            }
-            else{
-                if (first_time){
-                    head_ptr    = right_thru;
-                    main_thru   = right_thru;
-                    first_time  = false;
-                }
-                else{
-                    main_thru->next         = right_thru;
-                    main_thru->next->prev   = main_thru;
-                    main_thru               = main_thru->next;
-                }
-                right_thru = right_thru->next;
-            }
-
-            if(left_thru==nullptr || right_thru==nullptr){
-                break;
-            }
-        }
-
-
-        if(left_thru==nullptr){
-            //std::cout<<"left_thru null \n";
-            main_thru->next = right_thru;
-            main_thru->next->prev = main_thru;
-        }
-        else if(right_thru==nullptr){
-            //std::cout<<"right_thru null \n";
-            main_thru->next = left_thru;
-            main_thru->next->prev = main_thru;
-        }
-        return head_ptr;
-    }
-
-
+	//=========================================================================
     //Check if the LinkedList is in sorted order or not
     bool isSorted() const;
 
@@ -560,4 +478,89 @@ void LinkedList<T>::split(Node* startNode, Node** left_start_node, Node** right_
 
     (*right_start_node)->prev = nullptr;
     fast->next                = nullptr;
+}
+
+// Node* Merge(Node* left_start_node, Node* right_start_node){
+//     std::cout<<"Inside Merge\n";
+//     if (left_start_node==nullptr){
+//         return right_start_node;
+//     }
+//
+//     if (right_start_node==nullptr){
+//         return left_start_node;
+//     }
+//
+//     Node* head_ptr = nullptr;
+//
+//     if(left_start_node->data<=right_start_node->data){
+//         head_ptr = left_start_node;
+//         head_ptr->next = Merge(left_start_node->next, right_start_node);
+//         head_ptr->next->prev = head_ptr;
+//     }
+//     else{
+//         head_ptr = right_start_node;
+//         head_ptr->next = Merge(left_start_node, right_start_node->next);
+//         head_ptr->next->prev = head_ptr;
+//     }
+//     return head_ptr;
+// }
+
+template <typename T>
+typename LinkedList<T>::Node* LinkedList<T>::Merge(Node* left_start_node, Node* right_start_node){
+	//std::cout<<">>>>>>Inside Merge\n";
+	//std::cout<<"left_start_node: "<<left_start_node<<'\n';
+	//std::cout<<"right_start_node: "<<right_start_node<<'\n';
+
+	Node* head_ptr;
+	Node* main_thru;
+
+	Node* left_thru  = left_start_node;
+	Node* right_thru = right_start_node;
+	bool first_time  = true;
+
+	while(true){
+		if(left_thru->data<=right_thru->data){
+			if (first_time){
+				head_ptr    = left_thru;
+				main_thru   = left_thru;
+				first_time  = false;
+			}
+			else{
+				main_thru->next         = left_thru;
+				main_thru->next->prev   = main_thru;
+				main_thru               = main_thru->next;
+			}
+			left_thru = left_thru->next;
+		}
+		else{
+			if (first_time){
+				head_ptr    = right_thru;
+				main_thru   = right_thru;
+				first_time  = false;
+			}
+			else{
+				main_thru->next         = right_thru;
+				main_thru->next->prev   = main_thru;
+				main_thru               = main_thru->next;
+			}
+			right_thru = right_thru->next;
+		}
+
+		if(left_thru==nullptr || right_thru==nullptr){
+			break;
+		}
+	}
+
+
+	if(left_thru==nullptr){
+		//std::cout<<"left_thru null \n";
+		main_thru->next = right_thru;
+		main_thru->next->prev = main_thru;
+	}
+	else if(right_thru==nullptr){
+		//std::cout<<"right_thru null \n";
+		main_thru->next = left_thru;
+		main_thru->next->prev = main_thru;
+	}
+	return head_ptr;
 }
