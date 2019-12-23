@@ -1,7 +1,6 @@
 //pragma once directive makes sure that this header will be included only once
 #pragma once
 #include <iostream>
-#include <stdexcept>
 
 class Node;
 
