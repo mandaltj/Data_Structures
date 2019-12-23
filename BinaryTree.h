@@ -257,24 +257,26 @@ void BinaryTree<T>::swap_(TreeNode *& iopNode, TreeNode *& currNode){
     //std::cout<<"currNode:\n";
     //displayNode_(currNode);
 
-    TreeNode* original_iopNode  = iopNode;
-    TreeNode* original_currNode = currNode;
+	//====================================================
+    // TreeNode* original_iopNode  = iopNode;
+    // TreeNode* original_currNode = currNode;
+	//
+	// iopNode  = original_currNode;
+    // currNode = original_iopNode;
+//=>//
+//  // currNode->left  = original_currNode->left;
+//  // currNode->right = original_currNode->right;
+//	//
+//  // iopNode->left  = nullptr;
+//  // iopNode->right = nullptr;
+//	//====================================================
+//
+//=>//The following three lines do the same job as above
+	std::swap(iopNode, currNode);
+	std::swap(iopNode->left, currNode->left);
+	std::swap(iopNode->right, currNode->right);
 
-    //std::cout<<"original_iopNode:\n";
-    //displayNode_(original_iopNode);
-    //std::cout<<"original_currNode:\n";
-    //displayNode_(original_currNode);
-    iopNode  = original_currNode;
-    currNode = original_iopNode;
-
-    currNode->left  = original_currNode->left;
-    currNode->right = original_currNode->right;
-
-    iopNode->left  = nullptr;
-    iopNode->right = nullptr;
-
-
-    //std::cout<<"New iopNode:\n";
+	//std::cout<<"New iopNode:\n";
     //displayNode_(iopNode);
     //std::cout<<"New currNode:\n";
     //displayNode_(currNode);
