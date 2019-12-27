@@ -1,13 +1,15 @@
 #pragma once
 
 #include <iostream>
+#include <math.h>
+#include <queue>
 
 //Class for Binary Search Tree
 template <typename T>
 class BinaryTree{
 public:
     //Constructor to initialize the headpointer of the binary tree to null
-    BinaryTree(): head_(nullptr) {}
+    BinaryTree(): head_(nullptr), node_count_(0) {}
 
     //Destructor
     ~BinaryTree() {
@@ -31,10 +33,17 @@ public:
     //Remove function
     void remove(const T& data);
 
-	//Get the Height of the binary tree
-	int getheight(){
-		return getheight_(head_);
-	};
+    //Get the Height of the binary tree
+    int getheight(){
+        return getheight_(head_);
+    };
+
+    //Check if binary tree is perfect or not
+    bool isPerfect() const;
+    //Check if binary tree is Full or not
+    bool isFull() const;
+    //Check if binary tree is Complete or not
+    bool isComplete() const;
 
     //Check whether binary tree empty or not
     bool empty() const {
@@ -56,6 +65,12 @@ private:
     };
 
     TreeNode* head_;    //Pointer to head of the binary tree
+
+    int node_count_;
+
+    //==========================================================================
+    //                            Functions
+    //==========================================================================
 
     //Function to delete the whole Binary Tree. Used in destructor
     void deleteTree(TreeNode*& currNode){
@@ -97,7 +112,7 @@ private:
     //by this function
     TreeNode*& swap_(TreeNode *& Node1, TreeNode *& Node2);
 
-	int getheight_(const TreeNode* currNode) const;
+    int getheight_(const TreeNode* currNode) const;
 
     void remove_(TreeNode *& currNode);
 
@@ -225,6 +240,7 @@ void BinaryTree<T>::insert(const T& data){
     //Using find_ to obtain a reference to the pointer to TreeNode where we will insert
     //For the case of insert, find_ will return a null pointer. If it didn't, then it means
     //that the data was already present which is a runtime error
+    node_count_++;
     TreeNode *& currNode = find_(data, head_);
     if (currNode!=nullptr)  throw std::runtime_error(std::string("This element already exists. Cannot insert duplicates!"));
     currNode = new TreeNode(data);
@@ -232,6 +248,7 @@ void BinaryTree<T>::insert(const T& data){
 
 template <typename T>
 void BinaryTree<T>::remove(const T& data) {
+    node_count_--;
     TreeNode *& currNode = find_(data, head_);
 
     if (currNode==nullptr) throw std::runtime_error(std::string("Data not found in Tree. Can't remove!"));
@@ -332,8 +349,87 @@ typename BinaryTree<T>::TreeNode*& BinaryTree<T>::iop_(TreeNode *& currNode){
 
 template <typename T>
 int BinaryTree<T>::getheight_(const TreeNode* currNode) const {
-	if (currNode==nullptr){
-		return 0;
-	}
-	return 1 + std::max(getheight_(currNode->left), getheight_(currNode->right));
+    if (currNode==nullptr){
+        return 0;
+    }
+    return 1 + std::max(getheight_(currNode->left), getheight_(currNode->right));
+}
+
+template <typename T>
+bool BinaryTree<T>::isPerfect() const {
+    int height = getheight_(head_);
+    if ( node_count_ != (pow(2,height)-1)){
+        return false;
+    }
+    return true;
+}
+
+template <typename T>
+bool BinaryTree<T>::isFull() const {
+    if (head_==nullptr){
+        return true;
+    }
+    std::queue<TreeNode*> nodes_to_check;
+    nodes_to_check.push(head_);
+
+    while(!nodes_to_check.empty()){
+        TreeNode* currNode = nodes_to_check.front();
+        nodes_to_check.pop();
+        if((currNode->left == nullptr && currNode->right != nullptr) ||
+        (currNode->left != nullptr && currNode->right == nullptr)){
+            return false;
+        }
+
+        if (currNode->left != nullptr && currNode->right != nullptr){
+            nodes_to_check.push(currNode->left);
+            nodes_to_check.push(currNode->right);
+        }
+    }
+    return true;
+
+}
+
+template <typename T>
+bool BinaryTree<T>::isComplete() const {
+    if (head_==nullptr){
+        return true;
+    }
+    std::queue<TreeNode*> nodes_to_check;
+    nodes_to_check.push(head_);
+
+    int level           = 0;
+    int temp_node_count = 0;
+    int height = getheight_(head_);
+
+    while(!nodes_to_check.empty()){
+        TreeNode* currNode = nodes_to_check.front();
+        nodes_to_check.pop();
+        temp_node_count++;
+        level = log2(temp_node_count)+1;
+        //std::cout<<"Node:count: "<<temp_node_count<<'\n';
+        //std::cout<<"Level: "<<level<<'\n';
+        if (level <= height-2){
+            if ((currNode->left == nullptr) || (currNode->right == nullptr)) {
+                return false;
+            }
+            nodes_to_check.push(currNode->left);
+            nodes_to_check.push(currNode->right);
+        }
+        if (level == height-1){
+            if ((currNode->left == nullptr) && (currNode->right != nullptr)) {
+                return false;
+            }
+            if (currNode->left != nullptr){
+                nodes_to_check.push(currNode->left);
+            }
+            if (currNode->right != nullptr){
+                nodes_to_check.push(currNode->left);
+            }
+        }
+        if (level == height){
+            break;
+        }
+    }
+
+    return true;
 }
