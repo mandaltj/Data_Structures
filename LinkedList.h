@@ -79,9 +79,9 @@ public:
     void MergeSortRecursive();
     void MergeSort(Node** startNode);
     void split(Node* startNode, Node** left_start_node, Node** right_start_node);
-	Node* Merge(Node* left_start_node, Node* right_start_node);
+    Node* Merge(Node* left_start_node, Node* right_start_node);
 
-	//=========================================================================
+    //=========================================================================
     //Check if the LinkedList is in sorted order or not
     bool isSorted() const;
 
@@ -95,6 +95,9 @@ public:
             popBack();
         }
     };
+
+    //Function to reverese a LinkedList
+    void reverse();
 
     ~LinkedList() {
         clear_list();
@@ -176,9 +179,7 @@ bool LinkedList<T>::equals(const LinkedList<T> & other) const{
         thisCur = thisCur->next;
         otherCur = otherCur->next;
     }
-
     return true;
-
 }
 
 template <typename T>
@@ -506,60 +507,80 @@ void LinkedList<T>::split(Node* startNode, Node** left_start_node, Node** right_
 
 template <typename T>
 typename LinkedList<T>::Node* LinkedList<T>::Merge(Node* left_start_node, Node* right_start_node){
-	//std::cout<<">>>>>>Inside Merge\n";
-	//std::cout<<"left_start_node: "<<left_start_node<<'\n';
-	//std::cout<<"right_start_node: "<<right_start_node<<'\n';
+    //std::cout<<">>>>>>Inside Merge\n";
+    //std::cout<<"left_start_node: "<<left_start_node<<'\n';
+    //std::cout<<"right_start_node: "<<right_start_node<<'\n';
 
-	Node* head_ptr;
-	Node* main_thru;
+    Node* head_ptr;
+    Node* main_thru;
 
-	Node* left_thru  = left_start_node;
-	Node* right_thru = right_start_node;
-	bool first_time  = true;
+    Node* left_thru  = left_start_node;
+    Node* right_thru = right_start_node;
+    bool first_time  = true;
 
-	while(true){
-		if(left_thru->data<=right_thru->data){
-			if (first_time){
-				head_ptr    = left_thru;
-				main_thru   = left_thru;
-				first_time  = false;
-			}
-			else{
-				main_thru->next         = left_thru;
-				main_thru->next->prev   = main_thru;
-				main_thru               = main_thru->next;
-			}
-			left_thru = left_thru->next;
-		}
-		else{
-			if (first_time){
-				head_ptr    = right_thru;
-				main_thru   = right_thru;
-				first_time  = false;
-			}
-			else{
-				main_thru->next         = right_thru;
-				main_thru->next->prev   = main_thru;
-				main_thru               = main_thru->next;
-			}
-			right_thru = right_thru->next;
-		}
+    while(true){
+        if(left_thru->data<=right_thru->data){
+            if (first_time){
+                head_ptr    = left_thru;
+                main_thru   = left_thru;
+                first_time  = false;
+            }
+            else{
+                main_thru->next         = left_thru;
+                main_thru->next->prev   = main_thru;
+                main_thru               = main_thru->next;
+            }
+            left_thru = left_thru->next;
+        }
+        else{
+            if (first_time){
+                head_ptr    = right_thru;
+                main_thru   = right_thru;
+                first_time  = false;
+            }
+            else{
+                main_thru->next         = right_thru;
+                main_thru->next->prev   = main_thru;
+                main_thru               = main_thru->next;
+            }
+            right_thru = right_thru->next;
+        }
 
-		if(left_thru==nullptr || right_thru==nullptr){
-			break;
-		}
-	}
+        if(left_thru==nullptr || right_thru==nullptr){
+            break;
+        }
+    }
 
 
-	if(left_thru==nullptr){
-		//std::cout<<"left_thru null \n";
-		main_thru->next = right_thru;
-		main_thru->next->prev = main_thru;
-	}
-	else if(right_thru==nullptr){
-		//std::cout<<"right_thru null \n";
-		main_thru->next = left_thru;
-		main_thru->next->prev = main_thru;
-	}
-	return head_ptr;
+    if(left_thru==nullptr){
+        //std::cout<<"left_thru null \n";
+        main_thru->next = right_thru;
+        main_thru->next->prev = main_thru;
+    }
+    else if(right_thru==nullptr){
+        //std::cout<<"right_thru null \n";
+        main_thru->next = left_thru;
+        main_thru->next->prev = main_thru;
+    }
+    return head_ptr;
+}
+
+template <typename T>
+void LinkedList<T>::reverse(){
+    if (size_ < 2){
+        return;
+    }
+
+    Node* currNode = head_;
+    while(currNode->next!=nullptr){
+        //Swapping the next and prev pointers of each node
+        std::swap(currNode->next, currNode->prev);
+        currNode = currNode->prev;
+    }
+
+    //Swapping for the last node. because of while loop exit we need
+    //to explicitly do the swapping for last node
+    std::swap(currNode->next, currNode->prev);
+    //Swap head and tail pointers
+    std::swap(head_, tail_);
 }
