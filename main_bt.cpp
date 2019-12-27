@@ -18,9 +18,9 @@ int main(){
     //bt_test.remove(11);
 	//std::cout<<bt_test;
     //bt_test.remove(51);
-    bt_test.remove(19);
+    //bt_test.remove(19);
     //bt_test.remove(37);
-    std::cout<<bt_test;
+    std::cout<<bt_test.getheight()<<'\n';
 
     return 0;
 }

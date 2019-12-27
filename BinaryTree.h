@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+//Class for Binary Search Tree
 template <typename T>
 class BinaryTree{
 public:
@@ -29,6 +30,11 @@ public:
 
     //Remove function
     void remove(const T& data);
+
+	//Get the Height of the binary tree
+	int getheight(){
+		return getheight_(head_);
+	};
 
     //Check whether binary tree empty or not
     bool empty() const {
@@ -90,6 +96,8 @@ private:
     //using Node1 and Node2 and instead use the TreeNode pointer returned
     //by this function
     TreeNode*& swap_(TreeNode *& Node1, TreeNode *& Node2);
+
+	int getheight_(const TreeNode* currNode) const;
 
     void remove_(TreeNode *& currNode);
 
@@ -320,4 +328,12 @@ typename BinaryTree<T>::TreeNode*& BinaryTree<T>::iop_(TreeNode *& currNode){
     else{
         return iop_(currNode->right);
     }
+}
+
+template <typename T>
+int BinaryTree<T>::getheight_(const TreeNode* currNode) const {
+	if (currNode==nullptr){
+		return 0;
+	}
+	return 1 + std::max(getheight_(currNode->left), getheight_(currNode->right));
 }
