@@ -13,7 +13,8 @@ public:
 
     //Destructor
     ~BinaryTree() {
-        deleteTree(head_);
+		//std::cout<<"Destructor called\n";
+		deleteTree(head_);
     };
 
     //print In order
@@ -80,7 +81,10 @@ private:
         if (currNode->right!=nullptr){
             deleteTree(currNode->right);
         }
+		//std::cout<<"Deleting Node:\n";
+		//displayNode_(currNode);
         delete currNode;
+		currNode = nullptr;
     }
 
     //Function to check if a data exists in the BinaryTree or not
