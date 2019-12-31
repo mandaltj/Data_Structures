@@ -286,7 +286,7 @@ void BinaryTree<T>::remove_(TreeNode*& currNode) {
     }
 
     TreeNode *& iopNode = iop_(currNode->left);
-    TreeNode*& movedNode = swap_(iopNode, currNode);
+    TreeNode *& movedNode = swap_(iopNode, currNode);
     remove_(movedNode);
 }
 
@@ -296,16 +296,12 @@ typename BinaryTree<T>::TreeNode*& BinaryTree<T>::swap_(TreeNode *& Node1, TreeN
     TreeNode* original_Node2 = Node2;
 
     if (Node1->left==Node2){
-        std::cout<<"Check0\n";
-        // std::cout<<"Original Node1:\n";
-        // displayNode_(Node1);
-        // std::cout<<"Original Node2:\n";
-        // displayNode_(Node2);
 
         std::swap(Node1->right, Node2->right);
         Node1->left = original_Node2->left;
-        original_Node2->left = Node1;
+        original_Node2->left = original_Node1;
         Node1 = original_Node2;
+
         //We cannot change Node2 here because it changes Node1->left as well
         //This will become a never ending loop
         //Hence, avoid using Node1 and Node2 and instead use the returned pointer
@@ -314,23 +310,27 @@ typename BinaryTree<T>::TreeNode*& BinaryTree<T>::swap_(TreeNode *& Node1, TreeN
     else if (Node1->right==Node2){
         std::swap(Node1->left, Node2->left);
         Node1->right = original_Node2->right;
-        original_Node2->right = Node1;
+        original_Node2->right = original_Node1;
         Node1 = original_Node2;
+
         return Node1->right;
     }
 
     else if (Node2->left==Node1){
         std::swap(Node1->right, Node2->right);
         Node2->left = original_Node1->left;
-        original_Node1->left = Node2;
+        original_Node1->left = original_Node2;
         Node2 = original_Node1;
+
+
         return Node2->left;
     }
     else if (Node2->right==Node1){
         std::swap(Node1->left, Node2->left);
         Node2->right = original_Node1->right;
-        original_Node1->right = Node2;
+        original_Node1->right = original_Node2;
         Node2 = original_Node1;
+
         return Node2->right;
     }
     else{
