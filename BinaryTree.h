@@ -322,7 +322,6 @@ typename BinaryTree<T>::TreeNode*& BinaryTree<T>::swap_(TreeNode *& Node1, TreeN
         original_Node1->left = original_Node2;
         Node2 = original_Node1;
 
-
         return Node2->left;
     }
     else if (Node2->right==Node1){
@@ -334,9 +333,20 @@ typename BinaryTree<T>::TreeNode*& BinaryTree<T>::swap_(TreeNode *& Node1, TreeN
         return Node2->right;
     }
     else{
+        //std::cout<<"Original Node1:\n";
+        //displayNode_(Node1);
+        //std::cout<<"Original Node2:\n";
+        //displayNode_(Node2);
+
         std::swap(Node1->left, Node2->left);
         std::swap(Node1->right, Node2->right);
         std::swap(Node1, Node2);
+
+        //std::cout<<"New Node1:\n";
+        //displayNode_(Node1);
+        //std::cout<<"New Node2:\n";
+        //displayNode_(Node2);
+
         return Node1;
     }
 }

@@ -40,9 +40,6 @@ public:
     //Insert a key,data into AVL tree
     void insert(const K& key_arg, const D& data_arg);
 
-	//Balance a subtree if it has a balance factor >=2 or <=-2 at the Node
-	void ensure_balance_(TreeNode*& Node);
-
     //Remove a Node with "key_arg" as key
     void remove(const K& key_arg);
 
@@ -64,7 +61,6 @@ private:
     void displayNode_(const TreeNode* Node) const;
 
     void printInOrder_(const TreeNode* currNode) const;
-    void printPreOrder_(const TreeNode* currNode) const;
 
     //function to delete the AVL subtree/tree from given node
     void delete_avl_(TreeNode*& Node);
@@ -82,24 +78,35 @@ private:
     //Return type: void
     //This function may need to call _iopRemove function for certain cases
     void remove_(TreeNode*& Node);
+	void find_and_remove_(const K& key, TreeNode *& Node);
+	void iopRemove_(TreeNode*& targetNode);
+	void iopRemove_(TreeNode*& targetNode, TreeNode*& iopAncestor);
+	TreeNode*& swap_(TreeNode *& Node1, TreeNode *& Node2);
+	//==========================================================================
+	//				Functions for insertion
+	//==========================================================================
+	//Insert function
+	void insert_(const K& key_arg, const D& data_arg, TreeNode*& Node);
 
-    //update_height_() updates the "height" of each of the node in the AVL
+	//Balance a subtree if it has a balance factor >=2 or <=-2 at the Node
+	void ensure_balance_(TreeNode*& Node);
+
+	//update_height_() updates the "height" of each of the node in the AVL
     void update_height_(TreeNode*& Node);
 
     //get_height_() reutrns the height of the sub-tree/tree from given node
     int get_height_(TreeNode*& Node) const;
 
-	//Insert function
-	void insert_(const K& key_arg, const D& data_arg, TreeNode*& Node);
-
 	//Function to obtain balance factor at a particular node
 	int get_balance_factor_(TreeNode*& Node);
 
+	//==========================================================================
     //Rotation required for balancing of AVL
     void rotateLeft_(TreeNode*& Node);
     void rotateRight_(TreeNode*& Node);
     void rotateRightLeft_(TreeNode*& Node);
     void rotateLeftRight_(TreeNode*& Node);
+	//==========================================================================
 
 };
 
@@ -112,6 +119,143 @@ void AVL<K,D>::insert(const K& key_arg, const D& data_arg) {
 	std::cout<<"===============================================================\n";
 	insert_(key_arg, data_arg, head_);
 	std::cout<<"===============================================================\n\n";
+}
+
+template <typename K, typename D>
+void AVL<K, D>::remove(const K& key) {
+	find_and_remove_(key, head_);
+}
+
+template <typename K, typename D>
+void AVL<K, D>::find_and_remove_(const K& key, TreeNode *& Node) {
+	if (Node == nullptr){
+		return;
+	}
+
+	if (key == Node->key){
+		remove_(Node);
+		return;
+	}
+	else if (key < Node->key) {
+		find_and_remove_(key, Node->left);
+		ensure_balance_(Node);
+		return;
+	}
+	else if (key > Node->key) {
+		find_and_remove_(key, Node->right);
+		ensure_balance_(Node);
+		return;
+	}
+}
+
+template <typename K, typename D>
+void AVL<K,D>::remove_(TreeNode*& currNode) {
+	//Case 1
+	//Node being removed has no childs
+	if ((currNode->left == nullptr) && (currNode->right == nullptr)){
+        delete currNode;
+        currNode = nullptr;
+        return;
+    }
+	//Case 2
+	//Node being removed has one left child
+    else if ((currNode->left != nullptr) && (currNode->right == nullptr)){
+        TreeNode *& tempNode = currNode->left;
+        delete currNode;
+        currNode = tempNode;
+        return;
+    }
+	//Case 3
+	//Node being removed has one right child
+    else if ((currNode->left == nullptr) && (currNode->right != nullptr)){
+        TreeNode *& tempNode = currNode->right;
+        delete currNode;
+        currNode = tempNode;
+        return;
+    }
+	else {
+		iopRemove_(currNode);
+	}
+}
+
+template <typename K, typename D>
+void AVL<K, D>::iopRemove_(TreeNode*& targetNode) {
+	iopRemove_(targetNode, targetNode->left);
+	ensure_balance_(targetNode);
+}
+
+template <typename K, typename D>
+void AVL<K, D>::iopRemove_(TreeNode*& targetNode, TreeNode*& iopAncestor) {
+	if (iopAncestor->right != nullptr) {
+		iopRemove_(targetNode, iopAncestor->right);
+			ensure_balance_(iopAncestor);
+ 	}
+ 	else {
+		TreeNode *& movedTarget = swap_(targetNode, iopAncestor);
+		remove_(movedTarget);
+	}
+}
+
+template <typename K, typename D>
+typename AVL<K,D>::TreeNode*& AVL<K,D>::swap_(TreeNode *& Node1, TreeNode *& Node2){
+    TreeNode* original_Node1 = Node1;
+    TreeNode* original_Node2 = Node2;
+
+    if (Node1->left==Node2){
+
+        std::swap(Node1->right, Node2->right);
+        Node1->left = original_Node2->left;
+        original_Node2->left = original_Node1;
+        Node1 = original_Node2;
+
+        //We cannot change Node2 here because it changes Node1->left as well
+        //This will become a never ending loop
+        //Hence, avoid using Node1 and Node2 and instead use the returned pointer
+        return Node1->left;
+    }
+    else if (Node1->right==Node2){
+        std::swap(Node1->left, Node2->left);
+        Node1->right = original_Node2->right;
+        original_Node2->right = original_Node1;
+        Node1 = original_Node2;
+
+        return Node1->right;
+    }
+
+    else if (Node2->left==Node1){
+        std::swap(Node1->right, Node2->right);
+        Node2->left = original_Node1->left;
+        original_Node1->left = original_Node2;
+        Node2 = original_Node1;
+
+        return Node2->left;
+    }
+    else if (Node2->right==Node1){
+        std::swap(Node1->left, Node2->left);
+        Node2->right = original_Node1->right;
+        original_Node1->right = original_Node2;
+        Node2 = original_Node1;
+
+        return Node2->right;
+    }
+    else{
+		//std::cout<<"Original Node1:\n";
+        //displayNode_(Node1);
+        //std::cout<<"Original Node2:\n";
+        //displayNode_(Node2);
+
+        std::swap(Node1->left, Node2->left);
+        std::swap(Node1->right, Node2->right);
+        std::swap(Node1, Node2);
+
+		//std::cout<<"New Node1:\n";
+        //displayNode_(Node1);
+        //std::cout<<"New Node2:\n";
+        //displayNode_(Node2);
+
+		//We are returning the new postion of Node1 by reference
+        return Node1;
+    }
 }
 
 //==============================================================================
