@@ -13,8 +13,8 @@ public:
 
     //Destructor
     ~BinaryTree() {
-		//std::cout<<"Destructor called\n";
-		deleteTree(head_);
+        //std::cout<<"Destructor called\n";
+        deleteTree(head_);
     };
 
     //print In order
@@ -81,10 +81,10 @@ private:
         if (currNode->right!=nullptr){
             deleteTree(currNode->right);
         }
-		//std::cout<<"Deleting Node:\n";
-		//displayNode_(currNode);
+        //std::cout<<"Deleting Node:\n";
+        //displayNode_(currNode);
         delete currNode;
-		currNode = nullptr;
+        currNode = nullptr;
     }
 
     //Function to check if a data exists in the BinaryTree or not
@@ -118,8 +118,13 @@ private:
 
     int getheight_(const TreeNode* currNode) const;
 
+    //Helper function for remove()
     void remove_(TreeNode *& currNode);
 
+    //Recursion based helper function required for isComplete()
+    bool isComplete_(const TreeNode* Node, int index) const;
+
+    //print the binary tree in order
     void printInOrder_(std::ostream & os, const TreeNode* currNode) const;
 
     void displayNode_(const TreeNode* currNode){
@@ -244,18 +249,17 @@ void BinaryTree<T>::insert(const T& data){
     //Using find_ to obtain a reference to the pointer to TreeNode where we will insert
     //For the case of insert, find_ will return a null pointer. If it didn't, then it means
     //that the data was already present which is a runtime error
-    node_count_++;
     TreeNode *& currNode = find_(data, head_);
     if (currNode!=nullptr)  throw std::runtime_error(std::string("This element already exists. Cannot insert duplicates!"));
+    node_count_++;
     currNode = new TreeNode(data);
 }
 
 template <typename T>
 void BinaryTree<T>::remove(const T& data) {
-    node_count_--;
     TreeNode *& currNode = find_(data, head_);
-
     if (currNode==nullptr) throw std::runtime_error(std::string("Data not found in Tree. Can't remove!"));
+    node_count_--;
     return remove_(currNode);
 }
 
@@ -353,8 +357,14 @@ typename BinaryTree<T>::TreeNode*& BinaryTree<T>::iop_(TreeNode *& currNode){
 
 template <typename T>
 int BinaryTree<T>::getheight_(const TreeNode* currNode) const {
-    if (currNode==nullptr){
+    if ((currNode->left==nullptr) && (currNode->right==nullptr)){
         return 0;
+    }
+    if ((currNode->left==nullptr) && (currNode->right!=nullptr)) {
+        return 1 + getheight_(currNode->right);
+    }
+    if ((currNode->left!=nullptr) && (currNode->right==nullptr)) {
+        return 1 + getheight_(currNode->left);
     }
     return 1 + std::max(getheight_(currNode->left), getheight_(currNode->right));
 }
@@ -368,6 +378,9 @@ bool BinaryTree<T>::isPerfect() const {
     return true;
 }
 
+
+//A Binary Tree is Full if every node has either 0 or 2 children.
+//It is not necessary that all the leaf nodes be at the same level.
 template <typename T>
 bool BinaryTree<T>::isFull() const {
     if (head_==nullptr){
@@ -379,11 +392,17 @@ bool BinaryTree<T>::isFull() const {
     while(!nodes_to_check.empty()){
         TreeNode* currNode = nodes_to_check.front();
         nodes_to_check.pop();
+
+        //If any node has a single child(left/right) then this binary tree
+        //is not full. Hence, return false.
         if((currNode->left == nullptr && currNode->right != nullptr) ||
         (currNode->left != nullptr && currNode->right == nullptr)){
             return false;
         }
 
+        //If the node has a left and right child node then push it into the
+        //queue. It needs to be checked. We don't need to push nodes which don't
+        //have any children because they are leaf nodes themselves.
         if (currNode->left != nullptr && currNode->right != nullptr){
             nodes_to_check.push(currNode->left);
             nodes_to_check.push(currNode->right);
@@ -393,47 +412,23 @@ bool BinaryTree<T>::isFull() const {
 
 }
 
+//A Binary Tree is complete if all the levels are completely filled except maybe
+//the last level. The last level may or may not be completely filled. And if it
+//is not completely filled then all the leaf nodes must be to the left.
 template <typename T>
 bool BinaryTree<T>::isComplete() const {
-    if (head_==nullptr){
+    return isComplete_(head_, 0);
+}
+
+template <typename T>
+bool BinaryTree<T>::isComplete_(const TreeNode* Node, int index) const {
+    if (Node == nullptr){
         return true;
     }
-    std::queue<TreeNode*> nodes_to_check;
-    nodes_to_check.push(head_);
 
-    int level           = 0;
-    int temp_node_count = 0;
-    int height = getheight_(head_);
-
-    while(!nodes_to_check.empty()){
-        TreeNode* currNode = nodes_to_check.front();
-        nodes_to_check.pop();
-        temp_node_count++;
-        level = log2(temp_node_count)+1;
-        //std::cout<<"Node:count: "<<temp_node_count<<'\n';
-        //std::cout<<"Level: "<<level<<'\n';
-        if (level <= height-2){
-            if ((currNode->left == nullptr) || (currNode->right == nullptr)) {
-                return false;
-            }
-            nodes_to_check.push(currNode->left);
-            nodes_to_check.push(currNode->right);
-        }
-        if (level == height-1){
-            if ((currNode->left == nullptr) && (currNode->right != nullptr)) {
-                return false;
-            }
-            if (currNode->left != nullptr){
-                nodes_to_check.push(currNode->left);
-            }
-            if (currNode->right != nullptr){
-                nodes_to_check.push(currNode->left);
-            }
-        }
-        if (level == height){
-            break;
-        }
+    if (index >= node_count_){
+        return false;
     }
 
-    return true;
+    return (isComplete_(Node->left, 2*index+1) && isComplete_(Node->right, 2*index+2));
 }
