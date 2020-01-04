@@ -13,7 +13,7 @@ public:
 
     //Destructor
     ~BinaryTree() {
-        //std::cout<<"Destructor called\n";
+        std::cout<<"BinaryTree Destructor called\n";
         deleteTree(head_);
     };
 
@@ -75,6 +75,9 @@ private:
 
     //Function to delete the whole Binary Tree. Used in destructor
     void deleteTree(TreeNode*& currNode){
+        if (currNode==nullptr) {
+            return;
+        }
         if (currNode->left!=nullptr){
             deleteTree(currNode->left);
         }
@@ -347,7 +350,7 @@ typename BinaryTree<T>::TreeNode*& BinaryTree<T>::swap_(TreeNode *& Node1, TreeN
         //std::cout<<"New Node2:\n";
         //displayNode_(Node2);
 
-        return Node1;
+        return Node2;
     }
 }
 

@@ -5,6 +5,10 @@
 #include <queue>
 #include <stack>
 
+//==============================================================================
+//AVL Tree: https://www.cs.usfca.edu/~galles/visualization/AVLtree.html
+//==============================================================================
+
 //Key,value based AVL
 template <typename K, typename D>
 class AVL{
@@ -33,7 +37,7 @@ public:
 
     //Destructor
     ~AVL(){
-        //std::cout<<"Destructor called\n";
+        std::cout<<"AVL Destructor called\n";
         delete_avl_(head_);
     };
 
@@ -45,8 +49,8 @@ public:
 
     //print In order
     void printInOrder() const {
-		std::cout<<"Printing In Order:\n";
-		printInOrder_(head_);
+        std::cout<<"Printing In Order:\n";
+        printInOrder_(head_);
     }
 
 private:
@@ -78,35 +82,35 @@ private:
     //Return type: void
     //This function may need to call _iopRemove function for certain cases
     void remove_(TreeNode*& Node);
-	void find_and_remove_(const K& key, TreeNode *& Node);
-	void iopRemove_(TreeNode*& targetNode);
-	void iopRemove_(TreeNode*& targetNode, TreeNode*& iopAncestor);
-	TreeNode*& swap_(TreeNode *& Node1, TreeNode *& Node2);
-	//==========================================================================
-	//				Functions for insertion
-	//==========================================================================
-	//Insert function
-	void insert_(const K& key_arg, const D& data_arg, TreeNode*& Node);
+    void find_and_remove_(const K& key, TreeNode *& Node);
+    void iopRemove_(TreeNode*& targetNode);
+    void iopRemove_(TreeNode*& targetNode, TreeNode*& iopAncestor);
+    TreeNode*& swap_(TreeNode *& Node1, TreeNode *& Node2);
+    //==========================================================================
+    //                Functions for insertion
+    //==========================================================================
+    //Insert function
+    void insert_(const K& key_arg, const D& data_arg, TreeNode*& Node);
 
-	//Balance a subtree if it has a balance factor >=2 or <=-2 at the Node
-	void ensure_balance_(TreeNode*& Node);
+    //Balance a subtree if it has a balance factor >=2 or <=-2 at the Node
+    void ensure_balance_(TreeNode*& Node);
 
-	//update_height_() updates the "height" of each of the node in the AVL
+    //update_height_() updates the "height" of each of the node in the AVL
     void update_height_(TreeNode*& Node);
 
     //get_height_() reutrns the height of the sub-tree/tree from given node
     int get_height_(TreeNode*& Node) const;
 
-	//Function to obtain balance factor at a particular node
-	int get_balance_factor_(TreeNode*& Node);
+    //Function to obtain balance factor at a particular node
+    int get_balance_factor_(TreeNode*& Node);
 
-	//==========================================================================
+    //==========================================================================
     //Rotation required for balancing of AVL
     void rotateLeft_(TreeNode*& Node);
     void rotateRight_(TreeNode*& Node);
     void rotateRightLeft_(TreeNode*& Node);
     void rotateLeftRight_(TreeNode*& Node);
-	//==========================================================================
+    //==========================================================================
 
 };
 
@@ -116,84 +120,85 @@ private:
 template <typename K, typename D>
 void AVL<K,D>::insert(const K& key_arg, const D& data_arg) {
     //Find location to insert the new node
-	std::cout<<"===============================================================\n";
-	insert_(key_arg, data_arg, head_);
-	std::cout<<"===============================================================\n\n";
+    //std::cout<<"===============================================================\n";
+    insert_(key_arg, data_arg, head_);
+    //std::cout<<"===============================================================\n\n";
 }
 
 template <typename K, typename D>
 void AVL<K, D>::remove(const K& key) {
-	find_and_remove_(key, head_);
+    find_and_remove_(key, head_);
 }
 
 template <typename K, typename D>
 void AVL<K, D>::find_and_remove_(const K& key, TreeNode *& Node) {
-	if (Node == nullptr){
-		return;
-	}
+    if (Node == nullptr){
+        return;
+    }
 
-	if (key == Node->key){
-		remove_(Node);
-		return;
-	}
-	else if (key < Node->key) {
-		find_and_remove_(key, Node->left);
-		ensure_balance_(Node);
-		return;
-	}
-	else if (key > Node->key) {
-		find_and_remove_(key, Node->right);
-		ensure_balance_(Node);
-		return;
-	}
+    if (key == Node->key){
+        remove_(Node);
+        return;
+    }
+    else if (key < Node->key) {
+        find_and_remove_(key, Node->left);
+        ensure_balance_(Node);
+        return;
+    }
+    else if (key > Node->key) {
+        find_and_remove_(key, Node->right);
+        ensure_balance_(Node);
+        return;
+    }
 }
 
 template <typename K, typename D>
 void AVL<K,D>::remove_(TreeNode*& currNode) {
-	//Case 1
-	//Node being removed has no childs
-	if ((currNode->left == nullptr) && (currNode->right == nullptr)){
+    //Case 1
+    //Node being removed has no childs
+    if ((currNode->left == nullptr) && (currNode->right == nullptr)){
         delete currNode;
         currNode = nullptr;
         return;
     }
-	//Case 2
-	//Node being removed has one left child
+    //Case 2
+    //Node being removed has one left child
     else if ((currNode->left != nullptr) && (currNode->right == nullptr)){
         TreeNode *& tempNode = currNode->left;
         delete currNode;
         currNode = tempNode;
         return;
     }
-	//Case 3
-	//Node being removed has one right child
+    //Case 3
+    //Node being removed has one right child
     else if ((currNode->left == nullptr) && (currNode->right != nullptr)){
         TreeNode *& tempNode = currNode->right;
         delete currNode;
         currNode = tempNode;
         return;
     }
-	else {
-		iopRemove_(currNode);
-	}
+    else {
+        //throw(std::runtime_error(std::string("iopRemove not supported yet")));
+        iopRemove_(currNode);
+    }
 }
 
 template <typename K, typename D>
 void AVL<K, D>::iopRemove_(TreeNode*& targetNode) {
-	iopRemove_(targetNode, targetNode->left);
-	ensure_balance_(targetNode);
+    iopRemove_(targetNode, targetNode->left);
+    ensure_balance_(targetNode);
 }
 
 template <typename K, typename D>
 void AVL<K, D>::iopRemove_(TreeNode*& targetNode, TreeNode*& iopAncestor) {
-	if (iopAncestor->right != nullptr) {
-		iopRemove_(targetNode, iopAncestor->right);
-			ensure_balance_(iopAncestor);
- 	}
- 	else {
-		TreeNode *& movedTarget = swap_(targetNode, iopAncestor);
-		remove_(movedTarget);
-	}
+    if (iopAncestor->right != nullptr) {
+        iopRemove_(targetNode, iopAncestor->right);
+        ensure_balance_(iopAncestor);
+     }
+     else {
+        TreeNode *& movedTarget = swap_(targetNode, iopAncestor);
+        remove_(movedTarget);
+    }
 }
 
 template <typename K, typename D>
@@ -239,7 +244,7 @@ typename AVL<K,D>::TreeNode*& AVL<K,D>::swap_(TreeNode *& Node1, TreeNode *& Nod
         return Node2->right;
     }
     else{
-		//std::cout<<"Original Node1:\n";
+        //std::cout<<"Original Node1:\n";
         //displayNode_(Node1);
         //std::cout<<"Original Node2:\n";
         //displayNode_(Node2);
@@ -248,13 +253,13 @@ typename AVL<K,D>::TreeNode*& AVL<K,D>::swap_(TreeNode *& Node1, TreeNode *& Nod
         std::swap(Node1->right, Node2->right);
         std::swap(Node1, Node2);
 
-		//std::cout<<"New Node1:\n";
+        //std::cout<<"New Node1:\n";
         //displayNode_(Node1);
         //std::cout<<"New Node2:\n";
         //displayNode_(Node2);
 
-		//We are returning the new postion of Node1 by reference
-        return Node1;
+        //We are returning the new postion of Node1 by reference
+        return Node2;
     }
 }
 
@@ -295,7 +300,7 @@ void AVL<K,D>::delete_avl_(TreeNode*& Node){
     //This means that Node has both its left and right pointers null
     //std::cout<<"Deleting Node\n";
     //displayNode_(Node);
-    delete Node;
+    //delete Node;
     Node = nullptr;
 }
 
@@ -320,14 +325,13 @@ typename AVL<K,D>::TreeNode*& AVL<K,D>::find_(const K& key_arg, TreeNode*& Node)
 template <typename K, typename D>
 void AVL<K,D>::insert_(const K& key_arg, const D& data_arg, TreeNode*& Node){
 
-	if (Node == nullptr){
+    if (Node == nullptr){
         Node = new TreeNode(key_arg, data_arg);
-		//Debug
-		std::cout<<"Inserting new Node:"<<"\n";
-		std::cout<<"Key:"<<key_arg<<" Data: "<<data_arg<<"\n\n";
+        //Debug
+        //std::cout<<"Inserting new Node:"<<"\n";
+        //std::cout<<"Key:"<<key_arg<<" Data: "<<data_arg<<"\n\n";
         return;
     }
-
 
     if (Node->key == key_arg){
         throw std::runtime_error(std::string("Key already present Cannot enter duplicate"));
@@ -335,9 +339,6 @@ void AVL<K,D>::insert_(const K& key_arg, const D& data_arg, TreeNode*& Node){
 
     if (key_arg < Node->key){
         insert_(key_arg, data_arg, Node->left);
-        //Updating the height of all the nodes upto this node as root.
-        //We need the updated value of height to check the balance factor
-        update_height_(Node);
         //ensure_balance_() make sure that the AVL is balanced. It needs to be
         //run from the current node location i.e. "Node". Because a new node has
         //been inserted to the left sub-tree of "Node" which can cause imbalance
@@ -348,17 +349,21 @@ void AVL<K,D>::insert_(const K& key_arg, const D& data_arg, TreeNode*& Node){
     else{
         insert_(key_arg, data_arg, Node->right);
         //Same logic as above
-        update_height_(Node);
-        //Same logic as above
         ensure_balance_(Node);
     }
 }
 
 template <typename K, typename D>
 void AVL<K, D>::ensure_balance_(TreeNode*& Node) {
-	if (Node ==  nullptr){
+    if (Node ==  nullptr){
         return;
     }
+
+    //Before ensuring balance at the node we update the height of all the nodes
+    //which are children. This makes it easy to use update_height_()
+    //We can call ensure_balance_ without worrying about whether we need to explicitly
+    //call update_height_ or not outside
+    update_height_(Node);
 
     //A negative value means AVL is tilted towards left
     //A positive value means AVL is tilted towards right
@@ -374,11 +379,11 @@ void AVL<K, D>::ensure_balance_(TreeNode*& Node) {
     }
 
     if (balance_factor == -2){
-		//Debug
-		std::cout<<"Balancing at Node:\n";
-		displayNode_(Node);
+        //Debug
+        std::cout<<"Balancing at Node:\n";
+        displayNode_(Node);
 
-		//Means the subtree is left tilted
+        //Means the subtree is left tilted
         int left_subtree_balance_factor = get_balance_factor_(Node->left);
         if ((left_subtree_balance_factor == -1) || (left_subtree_balance_factor == 0)){
             rotateRight_(Node);
@@ -394,15 +399,19 @@ void AVL<K, D>::ensure_balance_(TreeNode*& Node) {
             throw std::runtime_error(msg);
         }
 
-		//Debug
-		//std::cout<<"After Rotation:\n";
-		//printInOrder_(head_);
+        //Debug
+        //std::cout<<"After Rotation:\n";
+        //printInOrder_(head_);
+
+        //After rebalancing we are updating the heights of the nodes again to
+        //keep the height values correct
+        update_height_(Node);
     }
 
     if (balance_factor == 2){
-		//Debug
-		// std::cout<<"Balancing at Node:\n";
-		// displayNode_(Node);
+        //Debug
+        std::cout<<"Balancing at Node:\n";
+        displayNode_(Node);
 
         //Means the subtree is right tilted
         int right_subtree_balance_factor = get_balance_factor_(Node->right);
@@ -420,22 +429,18 @@ void AVL<K, D>::ensure_balance_(TreeNode*& Node) {
             throw std::runtime_error(msg);
         }
 
-		//Debug
-		//std::cout<<"After Rotation:\n";
-		//printInOrder_(head_);
+        //Debug
+        //std::cout<<"After Rotation:\n";
+        //printInOrder_(head_);
+
+        //After rebalancing we are updating the heights of the nodes again to
+        //keep the height values correct
+        update_height_(Node);
     }
 
-
-
-    //The rotations would have caused the height of subtree to change.
-    //This is not necessary and can be omitted.
-    //But if we don't update the height then the precautionary balance factor
-    //check will throw errors.
-    update_height_(Node);
-
-	//Debug
-	//std::cout<<"After Height Update:\n";
-	//printInOrder_(head_);
+    //Debug
+    //std::cout<<"After Height Update:\n";
+    //printInOrder_(head_);
 
     ////This should fix the balance factor upto this Node
     //balance_factor = get_balance_factor_(Node);
@@ -458,15 +463,15 @@ int AVL<K, D>::get_balance_factor_(TreeNode*& Node) {
 
 template <typename K, typename D>
 void AVL<K,D>::update_height_(TreeNode*& Node){
-	if ((Node->left == nullptr) && (Node->right == nullptr)) {
-		Node->height = 0;
-		return;
+    if ((Node->left == nullptr) && (Node->right == nullptr)) {
+        Node->height = 0;
+        return;
     }
-	//Debug
-	//std::cout<<"Updating height:\n";
-	//displayNode_(Node);
+    //Debug
+    //std::cout<<"Updating height:\n";
+    //displayNode_(Node);
 
-	if (Node->left != nullptr){
+    if (Node->left != nullptr){
         update_height_(Node->left);
     }
     if (Node->right != nullptr){
@@ -496,60 +501,60 @@ int AVL<K,D>::get_height_(TreeNode*& Node) const {
 
 template <typename K, typename D>
 void AVL<K,D>::rotateRight_(TreeNode*& Node) {
-	if (Node == nullptr) {
-		throw std::runtime_error(std::string("Error: rotateRight"));
-	}
+    if (Node == nullptr) {
+        throw std::runtime_error(std::string("Error: rotateRight"));
+    }
 
-	//Debug
-	// std::cout<<"Performing Right rotation at Node:\n";
-	// displayNode_(Node);
+    //Debug
+    // std::cout<<"Performing Right rotation at Node:\n";
+    // displayNode_(Node);
 
-	TreeNode* left_Node = Node->left;
-	Node->left = left_Node->right;
-	left_Node->right = Node;
-	Node = left_Node;
+    TreeNode* left_Node = Node->left;
+    Node->left = left_Node->right;
+    left_Node->right = Node;
+    Node = left_Node;
 }
 
 template <typename K, typename D>
 void AVL<K,D>::rotateLeft_(TreeNode*& Node) {
-	if (Node == nullptr) {
-		throw std::runtime_error(std::string("Error: rotateLeft"));
-	}
+    if (Node == nullptr) {
+        throw std::runtime_error(std::string("Error: rotateLeft"));
+    }
 
-	//Debug
-	// std::cout<<"Performing Left rotation at Node:\n";
-	// displayNode_(Node);
+    //Debug
+    // std::cout<<"Performing Left rotation at Node:\n";
+    // displayNode_(Node);
 
-	TreeNode* right_Node = Node->right;
-	Node->right = right_Node->left;
-	right_Node->left = Node;
-	Node = right_Node;
+    TreeNode* right_Node = Node->right;
+    Node->right = right_Node->left;
+    right_Node->left = Node;
+    Node = right_Node;
 }
 
 template <typename K, typename D>
 void AVL<K,D>::rotateRightLeft_(TreeNode*& Node) {
-	if (Node == nullptr) {
-		throw std::runtime_error(std::string("Error: rotateRightLeft"));
-	}
+    if (Node == nullptr) {
+        throw std::runtime_error(std::string("Error: rotateRightLeft"));
+    }
 
-	//Debug
-	// std::cout<<"Performing RightLeft rotation at Node:\n";
-	// displayNode_(Node);
+    //Debug
+    // std::cout<<"Performing RightLeft rotation at Node:\n";
+    // displayNode_(Node);
 
-	rotateRight_(Node->right);
-	rotateLeft_(Node);
+    rotateRight_(Node->right);
+    rotateLeft_(Node);
 }
 
 template <typename K, typename D>
 void AVL<K,D>::rotateLeftRight_(TreeNode*& Node) {
-	if (Node == nullptr) {
-		throw std::runtime_error(std::string("Error: rotateLeftRight; Called on nullptr"));
-	}
+    if (Node == nullptr) {
+        throw std::runtime_error(std::string("Error: rotateLeftRight; Called on nullptr"));
+    }
 
-	//Debug
-	// std::cout<<"Performing LeftRight rotation at Node:\n";
-	// displayNode_(Node);
+    //Debug
+    // std::cout<<"Performing LeftRight rotation at Node:\n";
+    // displayNode_(Node);
 
-	rotateLeft_(Node->left);
-	rotateRight_(Node);
+    rotateLeft_(Node->left);
+    rotateRight_(Node);
 }

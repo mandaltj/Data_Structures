@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS= -std=c++11
+CXXFLAGS= -std=c++11 -g
 EXE_SRC_1  := main_ll.cpp
 EXE_SRC_2  := main_bt.cpp
 EXE_SRC_3  := main_avl.cpp
