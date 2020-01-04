@@ -289,7 +289,7 @@ void BinaryTree<T>::remove_(TreeNode*& currNode) {
     }
 
     TreeNode *& iopNode = iop_(currNode->left);
-    TreeNode *& movedNode = swap_(iopNode, currNode);
+    TreeNode *& movedNode = swap_(currNode, iopNode);
     remove_(movedNode);
 }
 

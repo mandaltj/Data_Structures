@@ -13,7 +13,7 @@ int main(){
     bt_test.insert(4);
     bt_test.insert(2);
     bt_test.insert(11);
-	std::cout<<bt_test;
+	//std::cout<<bt_test;
 
     bt_test.remove(16);
 	//std::cout<<bt_test;
