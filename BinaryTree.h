@@ -7,9 +7,26 @@
 //Class for Binary Search Tree
 template <typename T>
 class BinaryTree{
+private:
+    class TreeNode{
+    public:
+        T data;
+        TreeNode* left;
+        TreeNode* right;
+
+        //Default constructor for TreeNode
+        TreeNode(): left(nullptr), right(nullptr) {};
+
+        //Argument based constructor for TreeNode
+        TreeNode(const T& data): data(data), left(nullptr), right(nullptr) {}
+    };
+
 public:
     //Constructor to initialize the headpointer of the binary tree to null
     BinaryTree(): head_(nullptr), node_count_(0) {}
+
+    //Copy Constructor
+    BinaryTree(const BinaryTree& other);
 
     //Destructor
     ~BinaryTree() {
@@ -23,6 +40,12 @@ public:
         printInOrder_(os, head_);
         os<<"]\n";
         return os;
+    }
+
+    //print In order; More detailed print function. Only for debugging
+    void printInOrder() const {
+        std::cout<<"Printing In Order:\n";
+        printInOrder_(head_);
     }
 
     //Function to check if the data exists or not
@@ -51,20 +74,11 @@ public:
         return !head_;
     }
 
+    TreeNode* getHead() const {
+        return head_;
+    }
+
 private:
-    class TreeNode{
-    public:
-        T data;
-        TreeNode* left;
-        TreeNode* right;
-
-        //Default constructor for TreeNode
-        TreeNode(): left(nullptr), right(nullptr) {};
-
-        //Argument based constructor for TreeNode
-        TreeNode(const T& data): data(data), left(nullptr), right(nullptr) {}
-    };
-
     TreeNode* head_;    //Pointer to head of the binary tree
 
     int node_count_;
@@ -130,7 +144,9 @@ private:
     //print the binary tree in order
     void printInOrder_(std::ostream & os, const TreeNode* currNode) const;
 
-    void displayNode_(const TreeNode* currNode){
+    void printInOrder_(const TreeNode* currNode) const;
+
+    void displayNode_(const TreeNode* currNode) const {
         std::cout<<"-------------------------------------------------------\n";
         std::cout<<"Address: "<<currNode<<" Data: "<<currNode->data<<'\n';
         std::cout<<"Address->left: "<<currNode->left<<'\n';
@@ -139,6 +155,26 @@ private:
     }
 };
 
+//Copy Constructor Definition
+template <typename T>
+BinaryTree<T>::BinaryTree(const BinaryTree& other){
+    //Initializing head_ to nullptr
+    head_ = nullptr;
+
+    std::queue<TreeNode*> nodes_to_insert;
+    nodes_to_insert.push(other.getHead());
+    while(!nodes_to_insert.empty()){
+        TreeNode* currNode = nodes_to_insert.front();
+        nodes_to_insert.pop();
+        if (currNode->left != nullptr){
+            nodes_to_insert.push(currNode->left);
+        }
+        if (currNode->right != nullptr){
+            nodes_to_insert.push(currNode->right);
+        }
+        this->insert(currNode->data);
+    }
+}
 
 //std::cout << operator overload for LinkedList
 template <typename T>
@@ -155,6 +191,17 @@ void BinaryTree<T>::printInOrder_(std::ostream& os, const TreeNode* currNode) co
     printInOrder_(os, currNode->left);
     os<<currNode->data<<" ";
     printInOrder_(os, currNode->right);
+}
+
+template <typename T>
+void BinaryTree<T>::printInOrder_(const TreeNode* currNode) const {
+    if (currNode==nullptr){
+        return;
+    }
+
+    printInOrder_(currNode->left);
+    displayNode_(currNode);
+    printInOrder_(currNode->right);
 }
 
 template <typename T>
