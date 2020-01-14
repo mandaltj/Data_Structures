@@ -3,6 +3,7 @@ https://www.coursera.org/specializations/cs-fundamentals from University of Illi
 1) LinkedList.h - Contains a LinkedList Class. Also has sorting member functions. This is a template class.
 2) BinaryTree.h - Implementaion of a Binary Search Tree. Contains insertion and deletion features.
 3) AVL.h - AVL tree implementation. Contains insertion and deletion features.
+3) Heap.h - Min Heap implementation. Contains insertion and deletion features.
 
 The primary objective is to learn the OOP aspect of C++ and certain basic data structures.
 1) main_ll.cpp has certain codes which can be used to measure the runtime of a section of code. It uses "chrono" library.
@@ -15,3 +16,5 @@ Hence, the iop removal and the insertions are slight more complex. Interesting f
 5) In main_bt.cpp, added some code and comments about the "Rule of Three". Basically I didn't implement copy constructor in
 my BinaryTree implementation. So when I used the copy method to initialize new BinaryTree instances, it did a shallow copy of
 the internal nodes. Added the stackoverflow link as well.
+6) In main_heap.cpp, the Heap.h data structure is used to implement a min Heap. Also the std::make_heap and std::push_heap
+are explored.
